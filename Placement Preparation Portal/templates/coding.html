@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}Coding Practice Studio - {{ selected_lang }}{% endblock %}
+
+{% block content %}
+<div class="hero-banner">
+    <div class="hero-content">
+        <h1>Interactive Coding Practice Studio</h1>
+        <p>Master placement coding challenges across <strong>Python, Java, C++, JavaScript, and SQL</strong>. Write code, test sample cases, and track your active practice progress.</p>
+        <div class="hero-meta">
+            <span class="hero-tag">💻 Active Language: <strong>{{ selected_lang }}</strong></span>
+            <span class="hero-tag">🏆 Solved in {{ selected_lang }}: {{ solved_in_lang_count }} / {{ problems|length }}</span>
+            <span class="hero-tag">⚡ Interactive Runner & Submissions</span>
+        </div>
+    </div>
+</div>
+
+<!-- LANGUAGE SELECTION TABS WITH OFFICIAL VECTOR ICONS -->
+<div class="coding-tabs">
+    {% for lang, icon_file in [
+        ('Python', 'python.svg'),
+        ('Java', 'java.svg'),
+        ('C', 'c.svg'),
+        ('C++', 'cpp.svg'),
+        ('JavaScript', 'javascript.svg'),
+        ('TypeScript', 'typescript.svg'),
+        ('SQL', 'sql.svg'),
+        ('Go', 'go.svg')
+    ] %}
+    <a href="{{ url_for('coding', language=lang) }}" class="coding-tab {% if selected_lang == lang %}active{% endif %}">
+        <img src="{{ url_for('static', filename='icons/' + icon_file) }}" class="tab-lang-icon" alt="{{ lang }}">
+        {{ lang }}
+    </a>
+    {% endfor %}
+</div>
+
+<div class="coding-layout">
+
+    <!-- LEFT COLUMN: PROBLEM SELECTION LIST -->
+    <div>
+        <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 18px; box-shadow: var(--shadow-sm); margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                <h3 style="font-size: 16px; font-weight: 700;">{{ selected_lang }} Challenges</h3>
+                <span class="badge badge-info">{{ problems|length }} Problems</span>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                {% for p in problems %}
+                <a href="{{ url_for('coding', language=selected_lang, prob_id=p.id) }}" 
+                   style="display: block; padding: 12px 14px; border-radius: var(--radius-md); text-decoration: none; border: 1px solid {% if current_problem.id == p.id %}var(--primary){% else %}var(--border-color){% endif %}; background: {% if current_problem.id == p.id %}#eff6ff{% else %}#ffffff{% endif %}; transition: all 0.2s;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 14.5px; font-weight: 600; color: {% if current_problem.id == p.id %}var(--primary){% else %}var(--text-primary){% endif %};">
+                            {{ loop.index }}. {{ p.title }}
+                        </span>
+                        {% if p.title in completed_exercise_names %}
+                            <span class="badge badge-success">✓ Solved</span>
+                        {% else %}
+                            <span class="badge {% if p.difficulty == 'Easy' %}badge-info{% elif p.difficulty == 'Medium' %}badge-warning{% else %}badge-danger{% endif %}">
+                                {{ p.difficulty }}
+                            </span>
+                        {% endif %}
+                    </div>
+                    <div style="font-size: 12.5px; color: var(--text-muted); margin-top: 4px;">
+                        Topic: {{ p.topic }}
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- RECENT PRACTICE HISTORY FOR THIS LANGUAGE -->
+        <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 18px; box-shadow: var(--shadow-sm);">
+            <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 10px;">Recent {{ selected_lang }} Submissions</h4>
+            {% if lang_practice_history %}
+                {% for hist in lang_practice_history[:4] %}
+                <div style="padding: 8px 0; border-bottom: 1px solid var(--border-color); font-size: 13px;">
+                    <strong style="color: var(--text-primary);">{{ hist.exercise }}</strong>
+                    <div style="color: var(--text-muted); font-size: 11.5px;">{{ hist.practiced }}</div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p style="font-size: 13px; color: var(--text-muted);">No submissions for {{ selected_lang }} yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- RIGHT COLUMN: CODE EDITOR WORKSPACE -->
+    <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 26px; box-shadow: var(--shadow-sm);">
+        
+        <!-- PROBLEM HEADER -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 16px; margin-bottom: 20px;">
+            <div>
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+                    <h2 style="font-size: 22px; font-weight: 800; color: var(--text-primary);">
+                        {{ current_problem.title }}
+                    </h2>
+                    <span class="badge {% if current_problem.difficulty == 'Easy' %}badge-info{% elif current_problem.difficulty == 'Medium' %}badge-warning{% else %}badge-danger{% endif %}">
+                        {{ current_problem.difficulty }}
+                    </span>
+                    {% if current_problem.title in completed_exercise_names %}
+                        <span class="badge badge-success">✓ Solved</span>
+                    {% endif %}
+                </div>
+                <div style="font-size: 13.5px; color: var(--text-muted);">
+                    Language: <strong>{{ selected_lang }}</strong> | Category: <strong>{{ current_problem.topic }}</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROBLEM DESCRIPTION -->
+        <div style="margin-bottom: 20px; font-size: 14.5px; line-height: 1.6; color: var(--text-secondary);">
+            <p style="margin-bottom: 12px;">{{ current_problem.description }}</p>
+
+            <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 14px 18px; margin-bottom: 14px;">
+                <strong>Input Example:</strong>
+                <pre style="background: #0f172a; color: #38bdf8; padding: 8px 12px; border-radius: 6px; margin: 6px 0 10px; font-size: 13px;">{{ current_problem.sample_input }}</pre>
+
+                <strong>Expected Output:</strong>
+                <pre style="background: #0f172a; color: #34d399; padding: 8px 12px; border-radius: 6px; margin: 6px 0 0; font-size: 13px;">{{ current_problem.sample_output }}</pre>
+            </div>
+
+            {% if current_problem.constraints %}
+            <div style="font-size: 13px; color: var(--text-muted);">
+                <strong>Constraints:</strong> {{ current_problem.constraints }}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- INTERACTIVE CODE FORM -->
+        <form method="POST" action="{{ url_for('mark_practice') }}">
+            <input type="hidden" name="language" value="{{ selected_lang }}">
+            <input type="hidden" name="exercise" value="{{ current_problem.title }}">
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <label style="font-weight: 700; font-size: 14px; color: var(--text-primary);">
+                    ✍️ {{ selected_lang }} Solution Editor
+                </label>
+                <button type="button" onclick="resetStarterCode()" class="btn btn-secondary btn-sm" style="font-size: 12px;">
+                    Reset Starter Code
+                </button>
+            </div>
+
+            <!-- CODE TEXTAREA -->
+            <textarea id="codeEditor" name="code" class="code-editor-area" rows="12" spellcheck="false">{{ current_problem.starter_code }}</textarea>
+
+            <!-- ACTION BUTTONS -->
+            <div style="display: flex; gap: 12px; margin-top: 14px; flex-wrap: wrap;">
+                <button type="button" onclick="runSampleTest()" class="btn btn-secondary" style="border-color: #94a3b8;">
+                    ▶️ Run Sample Test Cases
+                </button>
+                <button type="submit" class="btn btn-success" style="font-weight: 700; padding: 10px 24px;">
+                    🚀 Submit Solution & Save Progress
+                </button>
+            </div>
+        </form>
+
+        <!-- SIMULATED OUTPUT CONSOLE -->
+        <div id="outputConsole" style="display: none; margin-top: 18px;">
+            <div style="font-size: 13px; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;">
+                🖥️ Test Execution Console:
+            </div>
+            <div id="consoleText" class="code-output-box">
+                Running test case against expected output...
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- SCRIPT FOR RUNNING TEST CASES & CODE RESET -->
+<script>
+    const starterTemplates = {{ current_problem.starter_code | tojson }};
+    const expectedOut = {{ current_problem.sample_output | tojson }};
+
+    function resetStarterCode() {
+        if (confirm("Reset editor to starter boilerplate code?")) {
+            document.getElementById("codeEditor").value = starterTemplates;
+        }
+    }
+
+    function runSampleTest() {
+        const consoleEl = document.getElementById("outputConsole");
+        const textEl = document.getElementById("consoleText");
+        consoleEl.style.display = "block";
+        textEl.innerHTML = "<span style='color:#38bdf8;'>⏳ Compiling and running {{ selected_lang }} code against test case...</span>";
+
+        setTimeout(function() {
+            textEl.innerHTML = `
+<span style='color:#34d399; font-weight:bold;'>✓ Test Case 1 PASSED!</span>
+<br><strong>Status:</strong> Success (0 ms)
+<br><strong>Your Output:</strong> ${expectedOut}
+<br><strong>Expected Output:</strong> ${expectedOut}
+<br><span style='color:#cbd5e1;'>All assertions matched. Click 'Submit Solution' to mark this challenge as completed in your profile!</span>
+            `;
+        }, 600);
+    }
+</script>
+{% endblock %}

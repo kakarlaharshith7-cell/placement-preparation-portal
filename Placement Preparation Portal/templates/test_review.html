@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Test Review - {{ attempt.category }}{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+    <div>
+        <h1 style="font-size: 26px; font-weight: 800; color: var(--text-primary);">Test Performance Review</h1>
+        <p style="color: var(--text-muted); font-size: 14.5px;">Detailed breakdown of questions, your selections, correct answers, and explanations.</p>
+    </div>
+    <div style="display: flex; gap: 10px;">
+        <a href="{{ url_for('scores') }}#tests" class="btn btn-secondary btn-sm">← Back to Score History</a>
+        <a href="{{ url_for('aptitude') }}" class="btn btn-primary btn-sm">Take Another Test</a>
+    </div>
+</div>
+
+<!-- RESULT SUMMARY BANNER -->
+<div class="score-hero">
+    {% set pct = (attempt.score * 100 // attempt.total) if attempt.total else 0 %}
+    <div class="score-circle" style="--pct: {{ pct }}; --ring: {{ 'var(--success)' if pct >= 60 else 'var(--danger)' }};">
+        <span class="big-number">{{ pct }}%</span>
+        <span class="percent-label">{{ attempt.score }}/{{ attempt.total }} Marks</span>
+    </div>
+    <h2 style="font-size: 22px; font-weight: 800; color: var(--text-primary); margin-bottom: 6px;">{{ attempt.category }}</h2>
+    <p style="color: var(--text-muted); font-size: 14px;">Submitted on: {{ attempt.submitted }} | Duration: Started at {{ attempt.started }}</p>
+</div>
+
+<!-- QUESTIONS BREAKDOWN -->
+<h2 class="section-title">📋 Question-by-Question Review</h2>
+
+{% if questions %}
+    {% for q in questions %}
+    <div class="review-item {% if q.is_correct %}correct{% else %}wrong{% endif %}">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span style="font-size: 13px; font-weight: 700; color: var(--text-muted);">QUESTION {{ loop.index }}</span>
+            {% if q.is_correct %}
+                <span class="badge badge-success">✓ Correct (+1 Mark)</span>
+            {% else %}
+                <span class="badge badge-danger">✗ Incorrect (0 Marks)</span>
+            {% endif %}
+        </div>
+
+        <div class="question-text" style="font-size: 16px;">
+            {{ q.question }}
+        </div>
+
+        {% if q.code %}
+        <pre><code>{{ q.code }}</code></pre>
+        {% endif %}
+
+        <div style="margin: 14px 0;">
+            {% for opt in q.options %}
+            <div style="padding: 10px 14px; border-radius: 8px; margin-bottom: 6px; font-size: 14px;
+                {% if loop.index0 == q.correct_idx %}
+                    background: #dcfce7; border: 1.5px solid #10b981; font-weight: 600; color: #065f46;
+                {% elif loop.index0 == q.user_idx and not q.is_correct %}
+                    background: #fee2e2; border: 1.5px solid #ef4444; color: #991b1b;
+                {% else %}
+                    background: #f8fafc; border: 1px solid var(--border-color); color: var(--text-secondary);
+                {% endif %}">
+                <span>{{ opt }}</span>
+                {% if loop.index0 == q.correct_idx %}
+                    <strong style="float: right; color: #059669;">✓ Correct Answer</strong>
+                {% elif loop.index0 == q.user_idx and not q.is_correct %}
+                    <strong style="float: right; color: #dc2626;">✗ Your Answer</strong>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if q.explanation %}
+        <div class="explanation-box">
+            <strong>💡 Explanation:</strong> {{ q.explanation }}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="question-card" style="text-align: center; color: var(--text-muted); padding: 40px;">
+        <p>No detailed question records are stored for this historical test. New tests taken will store complete question breakdowns and explanations.</p>
+    </div>
+{% endif %}
+
+<div style="margin-top: 30px; text-align: center;">
+    <a href="{{ url_for('aptitude') }}" class="btn btn-primary" style="padding: 12px 24px;">Start a New Aptitude or Coding Test →</a>
+</div>
+{% endblock %}

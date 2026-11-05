@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Top Placement Companies & Hiring Guide{% endblock %}
+
+{% block content %}
+<div class="hero-banner">
+    <div class="hero-content">
+        <h1>Top Recruitment Companies & Placement Guide</h1>
+        <p>Explore detailed recruitment processes, <strong>official company logos, CTC packages, eligibility criteria, exam patterns, syllabus, and frequently asked interview questions</strong> for 29+ top hiring companies.</p>
+        <div class="hero-meta">
+            <span class="hero-tag">29 Top Placement Companies</span>
+            <span class="hero-tag"> CTC: ₹3.36 LPA - ₹55 LPA</span>
+            <span class="hero-tag"> Exam Patterns & Syllabus</span>
+            <span class="hero-tag"> Direct Official Career Portals</span>
+        </div>
+    </div>
+</div>
+
+<!-- SEARCH / FILTER BAR -->
+<div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 18px 24px; margin-bottom: 28px; box-shadow: var(--shadow-sm); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+    <div>
+        <h3 style="font-size: 17px; font-weight: 700; color: var(--text-primary);">Search & Filter Placement Companies</h3>
+        <p style="font-size: 13.5px; color: var(--text-muted);">Browse by hiring tier: Mass recruiters (Service MNCs), Product Giants, and FinTech & Investment Banks.</p>
+    </div>
+    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <button type="button" onclick="filterCompanies('all')" class="btn btn-primary btn-sm filter-pill active-filter" id="btn-all">All Companies ({{ companies|length }})</button>
+        <button type="button" onclick="filterCompanies('MNC')" class="btn btn-secondary btn-sm filter-pill" id="btn-mnc">Service MNCs</button>
+        <button type="button" onclick="filterCompanies('Product')" class="btn btn-secondary btn-sm filter-pill" id="btn-product">Product Giants</button>
+        <button type="button" onclick="filterCompanies('FinTech')" class="btn btn-secondary btn-sm filter-pill" id="btn-fintech">FinTech & Banking</button>
+    </div>
+</div>
+
+<!-- SEARCH INPUT -->
+<div style="margin-bottom: 22px;">
+    <input type="text" id="companySearch" onkeyup="searchCompanies()" placeholder="🔍 Type to quickly find a company (e.g. Amazon, TCS, Google, Infosys, Goldman Sachs, Uber)..." 
+           style="width: 100%; padding: 14px 18px; border-radius: var(--radius-md); border: 1px solid var(--border-color); font-size: 15px; background: #ffffff; box-shadow: var(--shadow-sm);">
+</div>
+
+<!-- COMPANIES GRID -->
+<div class="modules-grid" style="grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));">
+    {% for c in companies %}
+    <article class="company-card" data-category="{{ c.category }}" data-name="{{ c.name|lower }}">
+        <div>
+            <!-- HEADER WITH OFFICIAL COMPANY LOGO (INSTEAD OF LETTERS) -->
+            <div class="company-badge-header">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <div class="company-logo">
+                        <img src="{{ url_for('static', filename='logos/' + c.logo) }}" alt="{{ c.name }} logo" class="company-logo-img">
+                    </div>
+                    <div>
+                        <h3 style="font-size: 18px; font-weight: 800; color: var(--text-primary); margin-bottom: 2px;">
+                            {{ c.name }}
+                        </h3>
+                        <span style="font-size: 12px; color: var(--text-muted); font-weight: 500;">{{ c.industry }}</span>
+                    </div>
+                </div>
+                <span class="company-ctc">{{ c.ctc }}</span>
+            </div>
+
+            <!-- OVERVIEW -->
+            <p style="font-size: 13.5px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 14px;">
+                {{ c.overview }}
+            </p>
+
+            <!-- DETAILS BREAKDOWN -->
+            <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 14px 16px; margin-bottom: 16px; font-size: 13px;">
+                <div class="company-info-row">
+                    <strong>🎓 Eligibility:</strong> {{ c.eligibility }}
+                </div>
+                <div class="company-info-row">
+                    <strong> Job Roles:</strong> {{ c.roles }}
+                </div>
+                <div class="company-info-row">
+                    <strong> Hiring Rounds:</strong> {{ c.rounds }}
+                </div>
+                <div class="company-info-row">
+                    <strong>⏱ Test Pattern:</strong> {{ c.test_pattern }}
+                </div>
+                <div class="company-info-row" style="margin-bottom: 0;">
+                    <strong> Key Syllabus:</strong> {{ c.syllabus }}
+                </div>
+            </div>
+
+            <!-- TOP INTERVIEW QUESTIONS FOR THIS COMPANY -->
+            <details style="margin-bottom: 16px; font-size: 13px; background: #ffffff; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 14px;">
+                <summary style="font-weight: 700; color: var(--primary); cursor: pointer;">
+                    Frequently Asked Questions at {{ c.name.split(' ')[0] }}
+                </summary>
+                <ul style="padding-left: 20px; margin-top: 10px; line-height: 1.7; color: var(--text-secondary);">
+                    {% for q in c.frequently_asked %}
+                    <li>{{ q }}</li>
+                    {% endfor %}
+                </ul>
+            </details>
+        </div>
+
+        <!-- ACTIONS -->
+        <div style="display: flex; gap: 10px; margin-top: 14px; border-top: 1px solid var(--border-color); padding-top: 14px;">
+            <a href="{{ c.careers_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="flex: 1; text-align: center; font-size: 13.5px;">
+                Official Careers Portal ↗
+            </a>
+            <a href="{{ url_for('aptitude') }}" class="btn btn-secondary btn-sm" style="font-size: 13px;">
+                Mock Test
+            </a>
+        </div>
+    </article>
+    {% endfor %}
+</div>
+
+<script>
+    let activeFilterType = 'all';
+
+    function filterCompanies(type) {
+        activeFilterType = type;
+        document.querySelectorAll('.filter-pill').forEach(btn => btn.className = 'btn btn-secondary btn-sm filter-pill');
+        if (type === 'all') document.getElementById('btn-all').className = 'btn btn-primary btn-sm filter-pill active-filter';
+        if (type === 'MNC') document.getElementById('btn-mnc').className = 'btn btn-primary btn-sm filter-pill active-filter';
+        if (type === 'Product') document.getElementById('btn-product').className = 'btn btn-primary btn-sm filter-pill active-filter';
+        if (type === 'FinTech') document.getElementById('btn-fintech').className = 'btn btn-primary btn-sm filter-pill active-filter';
+        applyFilters();
+    }
+
+    function searchCompanies() {
+        applyFilters();
+    }
+
+    function applyFilters() {
+        const query = document.getElementById('companySearch').value.toLowerCase().trim();
+        const cards = document.querySelectorAll('.company-card');
+
+        cards.forEach(card => {
+            const cat = card.dataset.category;
+            const name = card.dataset.name;
+            const matchesCat = (activeFilterType === 'all' || cat === activeFilterType);
+            const matchesQuery = (!query || name.includes(query) || card.innerText.toLowerCase().includes(query));
+
+            if (matchesCat && matchesQuery) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+</script>
+{% endblock %}

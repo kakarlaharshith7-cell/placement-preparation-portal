@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Test Result - {{ attempt.category }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 860px; margin: 0 auto;">
+
+    <!-- SCORE SUMMARY CARD -->
+    <div class="score-hero">
+        {% set pct = (attempt.score * 100 // attempt.total) if attempt.total else 0 %}
+        
+        <div class="score-circle" style="--pct: {{ pct }}; --ring: {{ 'var(--success)' if pct >= 60 else 'var(--danger)' }};">
+            <span class="big-number">{{ pct }}%</span>
+            <span class="percent-label">{{ attempt.score }}/{{ attempt.total }} Correct</span>
+        </div>
+
+        <h1 style="font-size: 26px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px;">
+            {% if pct >= 80 %}
+                Outstanding Performance!
+            {% elif pct >= 60 %}
+                Good Job! You Passed the Cutoff!
+            {% else %}
+                Keep Practicing! You Can Improve!
+            {% endif %}
+        </h1>
+
+        <p style="color: var(--text-secondary); font-size: 15px; margin-bottom: 18px;">
+            Test Category: <strong>{{ attempt.category }}</strong> | Submitted: {{ attempt.submitted }}
+        </p>
+
+        <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+            <a href="{{ url_for('scores') }}#tests" class="btn btn-secondary">
+                View Score History
+            </a>
+            <a href="{{ url_for('aptitude') }}" class="btn btn-primary">
+                Take Another Test
+            </a>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- DETAILED EXPLANATION AND REVIEW -->
+    <div class="section-title">
+        <span> Detailed Question Review & Explanations</span>
+    </div>
+
+    {% for q in questions %}
+    <div class="review-item {% if q.is_correct %}correct{% else %}wrong{% endif %}">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span style="font-size: 13px; font-weight: 700; color: var(--text-muted);">QUESTION {{ loop.index }}</span>
+            {% if q.is_correct %}
+                <span class="badge badge-success">✓ Correct (+1 Mark)</span>
+            {% else %}
+                <span class="badge badge-danger">✗ Incorrect (0 Marks)</span>
+            {% endif %}
+        </div>
+
+        <div class="question-text" style="font-size: 16px;">
+            {{ q.question }}
+        </div>
+
+        {% if q.code %}
+        <pre><code>{{ q.code }}</code></pre>
+        {% endif %}
+
+        <div style="margin: 14px 0;">
+            {% for opt in q.options %}
+            <div style="padding: 10px 14px; border-radius: 8px; margin-bottom: 6px; font-size: 14px;
+                {% if loop.index0 == q.correct_idx %}
+                    background: #dcfce7; border: 1.5px solid #10b981; font-weight: 600; color: #065f46;
+                {% elif loop.index0 == q.user_idx and not q.is_correct %}
+                    background: #fee2e2; border: 1.5px solid #ef4444; color: #991b1b;
+                {% else %}
+                    background: #f8fafc; border: 1px solid var(--border-color); color: var(--text-secondary);
+                {% endif %}">
+                <span>{{ opt }}</span>
+                {% if loop.index0 == q.correct_idx %}
+                    <strong style="float: right; color: #059669;">✓ Correct Answer</strong>
+                {% elif loop.index0 == q.user_idx and not q.is_correct %}
+                    <strong style="float: right; color: #dc2626;">✗ Your Selection</strong>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if q.explanation %}
+        <div class="explanation-box">
+            <strong>💡 Explanation:</strong> {{ q.explanation }}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+</div>
+{% endblock %}

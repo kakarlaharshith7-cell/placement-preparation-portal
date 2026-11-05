@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80">
+<rect width="200" height="80" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2"/>
+<circle cx="38" cy="30" r="5" fill="#E81123"/>
+<circle cx="48" cy="24" r="5" fill="#FFB900"/>
+<circle cx="60" cy="24" r="5" fill="#7FBA00"/>
+<circle cx="70" cy="30" r="5" fill="#00A4EF"/>
+<circle cx="74" cy="42" r="5" fill="#B4009E"/>
+<circle cx="70" cy="54" r="5" fill="#002050"/>
+<circle cx="60" cy="60" r="5" fill="#008272"/>
+<circle cx="48" cy="60" r="5" fill="#004E8C"/>
+<circle cx="38" cy="54" r="5" fill="#D83B01"/>
+<circle cx="34" cy="42" r="5" fill="#FF8C00"/>
+<text x="135" y="49" fill="#000000" font-size="28" font-weight="900" font-family="Arial, sans-serif" text-anchor="middle">wipro</text>
+</svg>

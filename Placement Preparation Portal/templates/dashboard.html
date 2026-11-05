@@ -1,0 +1,286 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<!-- WELCOME BANNER -->
+<section class="hero-banner">
+    <div class="hero-content">
+        <h1>Welcome, {{ user.name }}!</h1>
+        <p>Prepare today. Succeed tomorrow. Track your campus placement readiness in real time.</p>
+        <div class="hero-meta">
+            <span class="hero-tag"> Goal: {{ user.profession or 'Software Engineer' }}</span>
+            <span class="hero-tag"> Domain: {{ user.domain or 'Computer Science' }}</span>
+            {% if user.college %}
+            <span class="hero-tag"> {{ user.college }}</span>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- STUDENT PROFILE SECTION (MARKED BY USER) -->
+<section class="profile-card">
+    <div style="width: 100%; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 15px;">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                {{ user.name[0] if user.name else 'S' }}
+            </div>
+            <div class="profile-details">
+                <h2>{{ user.name }}</h2>
+                <p>{{ user.email }}</p>
+            </div>
+        </div>
+        <div>
+            <span class="badge badge-success" style="padding: 8px 14px; font-size: 13px;">&#128274; Profile saved &middot; one-time edit used</span>
+        </div>
+    </div>
+
+    <!-- PROFILE FIELDS DETAIL -->
+    <div class="profile-fields-grid">
+        <div class="profile-field-item">
+            <div class="profile-field-label">Student Name</div>
+            <div class="profile-field-value">{{ user.name }}</div>
+        </div>
+        <div class="profile-field-item">
+            <div class="profile-field-label">Email Address</div>
+            <div class="profile-field-value" style="word-break: break-all;">{{ user.email }}</div>
+        </div>
+        <div class="profile-field-item">
+            <div class="profile-field-label">Profession / Target Role</div>
+            <div class="profile-field-value">
+                <span class="badge badge-info">{{ user.profession or 'Not selected yet' }}</span>
+            </div>
+        </div>
+        <div class="profile-field-item">
+            <div class="profile-field-label">Technical Domain</div>
+            <div class="profile-field-value">
+                <span class="badge badge-purple">{{ user.domain or 'Not selected yet' }}</span>
+            </div>
+        </div>
+        <div class="profile-field-item">
+            <div class="profile-field-label">College / University</div>
+            <div class="profile-field-value">{{ user.college or 'Joy University' }}</div>
+        </div>
+        <div class="profile-field-item">
+            <div class="profile-field-label">Active Coding Language</div>
+            <div class="profile-field-value">
+                <span class="badge badge-success">{{ active_language or 'Python' }}</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- STATS SECTION (MARKED BY USER: ALL CLICKABLE WITH DETAILS) -->
+<h2 class="section-title">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+    Preparation Analytics & Performance
+</h2>
+
+<section class="stats-grid">
+    <!-- STAT 1: TESTS COMPLETED -->
+    <a href="{{ url_for('scores') }}#tests" class="stat-card tests-card">
+        <div class="stat-header">
+            <span class="stat-title">Tests Completed</span>
+            <div class="stat-icon tests">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            </div>
+        </div>
+        <div class="stat-value">{{ test_count }}</div>
+        <div class="stat-subtitle">
+            {% if test_count > 0 %}
+                {{ test_count }} tests completed across categories
+            {% else %}
+                No tests completed yet
+            {% endif %}
+        </div>
+        <div class="stat-link-action">
+            <span>View test history & scores</span> →
+        </div>
+    </a>
+
+    <!-- STAT 2: BEST SCORE (CLICKABLE TO CHECK IN WHICH TEST) -->
+    <a href="{{ url_for('scores') }}#best" class="stat-card score-card">
+        <div class="stat-header">
+            <span class="stat-title">Best Score</span>
+            <div class="stat-icon score">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+            </div>
+        </div>
+        <div class="stat-value">
+            {% if best_score is not none %}
+                {{ best_score }}%
+            {% else %}
+                N/A
+            {% endif %}
+        </div>
+        <div class="stat-subtitle">
+            {% if best_test_name %}
+                Achieved in: <strong>{{ best_test_name }}</strong>
+            {% else %}
+                Take a test to establish your top score
+            {% endif %}
+        </div>
+        <div class="stat-link-action">
+            <span>Open best score breakdown</span> →
+        </div>
+    </a>
+
+    <!-- STAT 3: CODING PROGRESS (CLICKABLE TO CHECK WHICH CODE IS PRACTICING) -->
+    <a href="{{ url_for('scores') }}#coding" class="stat-card coding-card">
+        <div class="stat-header">
+            <span class="stat-title">Coding Progress</span>
+            <div class="stat-icon coding">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            </div>
+        </div>
+        <div class="stat-value">{{ coding_count }} Solved</div>
+        <div class="stat-subtitle">
+            {% if recent_code_exercise %}
+                Practicing: <strong>{{ recent_code_exercise }}</strong> ({{ active_language }})
+            {% else %}
+                Start practicing Python, Java, C++, SQL
+            {% endif %}
+        </div>
+        <div class="stat-link-action">
+            <span>Check active code & practice history</span> →
+        </div>
+    </a>
+</section>
+
+<!-- PREPARATION MODULES (MARKED BY USER) -->
+<h2 class="section-title">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+    Preparation Modules
+</h2>
+
+<section class="modules-grid">
+    <!-- MODULE 1: APTITUDE PREPARATION (WITH CODING QUESTIONS!) -->
+    <article class="module-card aptitude">
+        <div>
+            <div class="module-icon-wrap">
+                <img src="{{ url_for('static', filename='icons/python.svg') }}" style="width: 32px; height: 32px;" alt="Aptitude">
+            </div>
+            <h3>Aptitude Preparation</h3>
+            <p>Practice Quantitative, Logical Reasoning, Verbal, and <strong>12+ Programming Language MCQs</strong> (Python, Java, C, C++, DSA, SQL, Web Tech).</p>
+            <div class="module-tags">
+                <span class="module-tag">Python & Java</span>
+                <span class="module-tag">C & C++</span>
+                <span class="module-tag">DSA & SQL</span>
+                <span class="module-tag">Quantitative</span>
+                <span class="module-tag">Timed Tests</span>
+            </div>
+        </div>
+        <a href="{{ url_for('aptitude') }}" class="module-btn">
+            Open Aptitude & Coding MCQs →
+        </a>
+    </article>
+
+    <!-- MODULE 2: CODING PRACTICE (LANGUAGE SELECTOR & INTERACTIVE WORKSPACE) -->
+    <article class="module-card coding">
+        <div>
+            <div class="module-icon-wrap">
+                <img src="{{ url_for('static', filename='icons/cpp.svg') }}" style="width: 32px; height: 32px;" alt="Coding">
+            </div>
+            <h3>Coding Practice Studio</h3>
+            <p>Solve coding challenges across <strong>Python, Java, C, C++, JavaScript, TypeScript, SQL, and Go</strong> with code runner and progress tracker.</p>
+            <div class="module-tags">
+                <span class="module-tag">Python</span>
+                <span class="module-tag">Java</span>
+                <span class="module-tag">C / C++</span>
+                <span class="module-tag">SQL & Go</span>
+                <span class="module-tag">DSA Challenges</span>
+            </div>
+        </div>
+        <a href="{{ url_for('coding') }}" class="module-btn">
+            Launch Coding Studio →
+        </a>
+    </article>
+
+    <!-- MODULE 3: INTERVIEW PREPARATION (QUESTIONS INTERVIEWERS ASK WITH ANSWERS) -->
+    <article class="module-card interview">
+        <div>
+            <div class="module-icon-wrap">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+            </div>
+            <h3>Interview Preparation</h3>
+            <p>Real questions interviewers ask with <strong>comprehensive model answers</strong>, STAR method explanations, core CS fundamentals, and HR tips.</p>
+            <div class="module-tags">
+                <span class="module-tag">HR Questions</span>
+                <span class="module-tag">Core CS & DBMS</span>
+                <span class="module-tag">OS & Networks</span>
+                <span class="module-tag">Model Answers</span>
+            </div>
+        </div>
+        <a href="{{ url_for('interview') }}" class="module-btn">
+            Explore Interview Q&A →
+        </a>
+    </article>
+
+    <!-- MODULE 4: COMPANIES & JOBS (COMPREHENSIVE COMPANY INFORMATION) -->
+    <article class="module-card companies">
+        <div>
+            <div class="module-icon-wrap">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+            </div>
+            <h3>Companies & Jobs</h3>
+            <p>Explore <strong>29+ top hiring companies</strong>: TCS, Infosys, Amazon, Google, Microsoft, Goldman Sachs, Uber with CTC packages, exam patterns, and syllabus.</p>
+            <div class="module-tags">
+                <span class="module-tag">29 Companies</span>
+                <span class="module-tag">Official Logos</span>
+                <span class="module-tag">CTC Packages</span>
+                <span class="module-tag">Exam Patterns</span>
+            </div>
+        </div>
+        <a href="{{ url_for('companies') }}" class="module-btn">
+            Explore 29 Companies →
+        </a>
+    </article>
+</section>
+
+<!-- RECENT TEST ACTIVITY PREVIEW -->
+{% if recent_tests %}
+<div class="table-container">
+    <div style="padding: 18px 22px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-size: 17px; font-weight: 700;">Recent Test Performances</h3>
+        <a href="{{ url_for('scores') }}" style="font-size: 13.5px; font-weight: 600; color: var(--primary); text-decoration: none;">View All History →</a>
+    </div>
+    <table class="custom-table">
+        <thead>
+            <tr>
+                <th>Test / Category</th>
+                <th>Score</th>
+                <th>Percentage</th>
+                <th>Date Submitted</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in recent_tests %}
+            <tr>
+                <td><strong>{{ t.category }}</strong></td>
+                <td>{{ t.score }} / {{ t.total }}</td>
+                <td>
+                    <span class="badge {% if (t.score * 100 // t.total) >= 70 %}badge-success{% elif (t.score * 100 // t.total) >= 50 %}badge-warning{% else %}badge-danger{% endif %}">
+                        {{ (t.score * 100 // t.total) }}%
+                    </span>
+                </td>
+                <td>{{ t.submitted }}</td>
+                <td>
+                    {% if (t.score * 100 // t.total) >= 60 %}
+                        <span style="color: #059669; font-weight: 600;">Passed</span>
+                    {% else %}
+                        <span style="color: #dc2626; font-weight: 600;">Needs Practice</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ url_for('test_review', attempt_id=t.id) }}" class="btn btn-secondary btn-sm">Review Questions</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{% endblock %}

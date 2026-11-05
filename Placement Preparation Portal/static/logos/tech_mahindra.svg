@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80">
+<rect width="200" height="80" rx="12" fill="#E31837"/>
+<text x="100" y="38" fill="#FFFFFF" font-size="19" font-weight="bold" font-family="Arial, sans-serif" text-anchor="middle">Tech</text>
+<text x="100" y="58" fill="#FFFFFF" font-size="21" font-weight="900" font-family="Arial, sans-serif" text-anchor="middle" letter-spacing="1">MAHINDRA</text>
+</svg>

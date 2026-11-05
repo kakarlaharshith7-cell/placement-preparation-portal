@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80">
+<rect width="200" height="80" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2"/>
+<g transform="translate(30, 22) scale(1.5)">
+  <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.5H12v4.8h6.5c-.3 1.5-1.1 2.8-2.4 3.7v3.1h3.9c2.3-2.1 3.5-5.2 3.5-9.1z"/>
+  <path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-3l-3.9-3.1c-1.1.7-2.5 1.2-4.1 1.2-3.1 0-5.8-2.1-6.8-5H1.2v3.2C3.2 21.3 7.3 24 12 24z"/>
+  <path fill="#FBBC05" d="M5.2 14.1c-.3-.8-.4-1.6-.4-2.5s.1-1.7.4-2.5V5.9H1.2C.4 7.6 0 9.5 0 11.6s.4 4 1.2 5.7l4-3.2z"/>
+  <path fill="#EA4335" d="M12 4.8c1.8 0 3.3.6 4.6 1.8l3.4-3.4C17.9 1.2 15.2 0 12 0 7.3 0 3.2 2.7 1.2 6.7l4 3.2c1-2.9 3.7-5.1 6.8-5.1z"/>
+</g>
+<text x="130" y="49" fill="#3c4043" font-size="26" font-weight="bold" font-family="'Google Sans', Arial, sans-serif" text-anchor="middle">Google</text>
+</svg>

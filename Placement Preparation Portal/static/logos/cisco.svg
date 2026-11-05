@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80">
+<rect width="200" height="80" rx="12" fill="#005073"/>
+<g fill="#049fd9" transform="translate(40, 16)">
+  <rect x="0" y="16" width="6" height="16" rx="3"/>
+  <rect x="14" y="8" width="6" height="24" rx="3"/>
+  <rect x="28" y="0" width="6" height="32" rx="3"/>
+  <rect x="42" y="8" width="6" height="24" rx="3"/>
+  <rect x="56" y="16" width="6" height="16" rx="3"/>
+</g>
+<text x="135" y="44" fill="#FFFFFF" font-size="22" font-weight="bold" font-family="Arial">CISCO</text>
+</svg>

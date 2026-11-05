@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Interview Preparation - Questions & Model Answers{% endblock %}
+
+{% block content %}
+<div class="hero-banner">
+    <div class="hero-content">
+        <h1>Interview Preparation & Model Answers</h1>
+        <p>Real questions asked by campus and corporate interviewers, complete with <strong>expert model answers, STAR method frameworks, and core CS fundamentals</strong>.</p>
+        <div class="hero-meta">
+            <span class="hero-tag">🎙️ HR & Behavioral Questions</span>
+            <span class="hero-tag">💾 DBMS, OS, Networks & OOPs</span>
+            <span class="hero-tag">🐍 Python, Java & C++ Technicals</span>
+            <span class="hero-tag">⭐ STAR Method Framework</span>
+        </div>
+    </div>
+</div>
+
+<!-- CATEGORY FILTER PILLS -->
+<div class="coding-tabs">
+    {% for cat_key, cat_name in [
+        ('hr', 'HR & Behavioral'),
+        ('dbms', 'DBMS & SQL'),
+        ('os', 'Operating Systems'),
+        ('cn', 'Computer Networks'),
+        ('oops', 'OOPs Concepts'),
+        ('python', 'Python Technical'),
+        ('java', 'Java Technical'),
+        ('dsa', 'DSA & Algorithms')
+    ] %}
+    <a href="{{ url_for('interview', category=cat_key) }}" class="coding-tab {% if selected_category == cat_key %}active{% endif %}">
+        {{ cat_name }}
+    </a>
+    {% endfor %}
+</div>
+
+<!-- CATEGORY TITLE & SUMMARY -->
+<div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+    <div>
+        <h2 style="font-size: 22px; font-weight: 800; color: var(--text-primary);">
+            {{ active_category_title }} ({{ questions|length }} Interview Questions)
+        </h2>
+        <p style="color: var(--text-muted); font-size: 14.5px;">Click on any question to view the interviewer's intent, suggested model answer, and key tips.</p>
+    </div>
+    <button type="button" onclick="toggleAllAccordions()" class="btn btn-secondary btn-sm" id="toggleBtn">
+        Expand / Collapse All
+    </button>
+</div>
+
+<!-- QUESTIONS ACCORDION LIST -->
+<div>
+    {% for q in questions %}
+    <details class="accordion-item" {% if loop.first %}open{% endif %}>
+        <summary class="accordion-summary">
+            <span>
+                <strong style="color: var(--primary); margin-right: 8px;">Q{{ loop.index }}.</strong>
+                {{ q.question }}
+            </span>
+            <span style="font-size: 13px; color: var(--text-muted); font-weight: normal;">Click to read answer ▼</span>
+        </summary>
+        
+        <div class="accordion-content">
+            <!-- INTERVIEWER INTENT -->
+            <div class="interview-intent">
+                 What the Interviewer is Evaluating: {{ q.intent }}
+            </div>
+
+            <!-- MODEL ANSWER -->
+            <div style="margin: 12px 0 16px;">
+                <strong style="color: var(--text-primary); display: block; margin-bottom: 6px;">Suggested Model Answer:</strong>
+                <div style="background: #ffffff; border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 14px 18px; font-size: 14.5px; line-height: 1.7; color: var(--text-secondary);">
+                    {{ q.answer | safe }}
+                </div>
+            </div>
+
+            {% if q.code %}
+            <div style="margin-bottom: 14px;">
+                <strong style="color: var(--text-primary); font-size: 13.5px;">Code Example / Demonstration:</strong>
+                <pre style="background: #0f172a; color: #38bdf8; padding: 12px 16px; border-radius: 8px; font-size: 13.5px; margin-top: 6px; overflow-x: auto;"><code>{{ q.code }}</code></pre>
+            </div>
+            {% endif %}
+
+            <!-- PRO TIP -->
+            <div class="interview-tip">
+                <strong>💡 Pro-Tip for this question:</strong> {{ q.tip }}
+            </div>
+        </div>
+    </details>
+    {% endfor %}
+</div>
+
+<!-- STAR METHOD REFERENCE BOX -->
+<div style="margin-top: 36px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--radius-lg); padding: 24px;">
+    <h3 style="font-size: 17px; font-weight: 700; color: #1e3a8a; margin-bottom: 10px;">
+        ⭐ Master The STAR Method for Behavioral & Scenario Questions
+    </h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; font-size: 13.5px; color: #1e40af;">
+        <div><strong>S - Situation:</strong> Set the scene and provide necessary background context.</div>
+        <div><strong>T - Task:</strong> Describe the specific challenge, goal, or responsibility you had.</div>
+        <div><strong>A - Action:</strong> Explain the exact steps and technologies YOU implemented to solve it.</div>
+        <div><strong>R - Result:</strong> Share the quantifiable outcome, metrics, and what you learned.</div>
+    </div>
+</div>
+
+<script>
+    let allOpen = false;
+    function toggleAllAccordions() {
+        const details = document.querySelectorAll('details.accordion-item');
+        allOpen = !allOpen;
+        details.forEach(d => d.open = allOpen);
+        document.getElementById('toggleBtn').textContent = allOpen ? "Collapse All" : "Expand All";
+    }
+</script>
+{% endblock %}

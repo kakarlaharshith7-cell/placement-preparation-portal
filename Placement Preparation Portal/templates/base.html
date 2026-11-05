@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Placement Preparation Portal{% endblock %} | Success Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="{{ page_class }}">
+
+    <!-- TOP NAVIGATION BAR -->
+    <nav class="navbar">
+        <a href="{{ url_for('dashboard') if session.get('user_id') else url_for('login') }}" class="brand-container">
+            <div class="brand-logo">P</div>
+            <div class="brand-text">
+                <h2>Placement Portal</h2>
+                <span>Prepare Today. Succeed Tomorrow.</span>
+            </div>
+        </a>
+
+        <div class="nav-links">
+            {% if session.get('user_id') %}
+                <a href="{{ url_for('dashboard') }}" class="{% if request.endpoint == 'dashboard' %}active{% endif %}">Dashboard</a>
+                {% if not profile_done %}<a href="{{ url_for('profile') }}" class="{% if request.endpoint == 'profile' %}active{% endif %}">Profile</a>{% endif %}
+                <a href="{{ url_for('aptitude') }}" class="{% if request.endpoint in ['aptitude', 'take_test', 'submit_test'] %}active{% endif %}">Aptitude</a>
+                <a href="{{ url_for('coding') }}" class="{% if request.endpoint == 'coding' %}active{% endif %}">Coding</a>
+                <a href="{{ url_for('interview') }}" class="{% if request.endpoint == 'interview' %}active{% endif %}">Interview</a>
+                <a href="{{ url_for('companies') }}" class="{% if request.endpoint == 'companies' %}active{% endif %}">Companies</a>
+                <a href="{{ url_for('scores') }}" class="{% if request.endpoint in ['scores', 'test_review', 'test_result'] %}active{% endif %}">Progress</a>
+                <a href="{{ url_for('logout') }}" class="nav-logout">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="{% if request.endpoint == 'login' %}active{% endif %}">Login</a>
+                <a href="{{ url_for('register') }}" class="{% if request.endpoint == 'register' %}active{% endif %}">Register</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- MAIN CONTAINER -->
+    <main class="main-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category if category != 'error' else 'danger' }}">
+                    <span>{{ message }}</span>
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Placement Preparation Portal. Built for high-impact campus and off-campus placements.</p>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

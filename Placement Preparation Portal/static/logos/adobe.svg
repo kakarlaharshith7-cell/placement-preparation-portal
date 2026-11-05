@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80">
+<rect width="200" height="80" rx="12" fill="#FA0F00"/>
+<g transform="translate(30, 20)">
+  <polygon points="0,0 12,40 0,40" fill="#FFFFFF"/>
+  <polygon points="40,0 28,40 40,40" fill="#FFFFFF"/>
+  <polygon points="20,16 29,40 21,40 17,29" fill="#FFFFFF"/>
+</g>
+<text x="125" y="48" fill="#FFFFFF" font-size="28" font-weight="bold" font-family="Arial">Adobe</text>
+</svg>

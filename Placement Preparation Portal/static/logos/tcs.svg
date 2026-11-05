@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80">
+<rect width="200" height="80" rx="12" fill="#0B1C48"/>
+<text x="100" y="44" fill="#FFFFFF" font-size="30" font-weight="900" font-family="Arial, sans-serif" text-anchor="middle" letter-spacing="3">TCS</text>
+<text x="100" y="62" fill="#00B0FF" font-size="10" font-weight="bold" font-family="Arial, sans-serif" text-anchor="middle" letter-spacing="2">TATA CONSULTANCY</text>
+</svg>

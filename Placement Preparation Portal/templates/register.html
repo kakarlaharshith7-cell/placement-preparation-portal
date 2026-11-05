@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Create Student Account - Placement Preparation Portal{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-box">
+        <div class="auth-header">
+            <div class="logo-badge">P</div>
+            <h1>Create Account</h1>
+            <p>Start your placement preparation journey today</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('register') }}">
+            <div class="form-group">
+                <label for="name">Full Name *</label>
+                <input id="name" name="name" type="text" placeholder="e.g. Kakarla Harshith Kumar" autocomplete="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">College / Email Address *</label>
+                <input id="email" name="email" type="email" placeholder="student@university.edu.in" autocomplete="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Create Password (min. 6 characters) *</label>
+                <input id="password" name="password" type="password" minlength="6" placeholder="Choose a secure password" autocomplete="new-password" required>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password *</label>
+                <input id="confirm_password" name="confirm_password" type="password" minlength="6" placeholder="Re-enter your password" autocomplete="new-password" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px; padding: 12px; font-size: 15px;">
+                🎓 Register & Begin Preparation
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            Already registered? <a href="{{ url_for('login') }}">Login to your account</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

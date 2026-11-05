@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Taking Test: {{ test_title }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 860px; margin: 0 auto;">
+
+    <!-- STICKY QUIZ HEADER WITH TIMER -->
+    <div class="quiz-header">
+        <div>
+            <div style="font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; font-weight: 600;">ACTIVE TEST</div>
+            <h2 style="font-size: 20px; font-weight: 800; color: #ffffff;">{{ test_title }}</h2>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px;">
+            <div class="timer-box">
+                <span>⏱️</span>
+                <span id="countdown">10:00</span>
+            </div>
+            <button type="button" onclick="document.getElementById('testForm').submit();" class="btn btn-success btn-sm">
+                Finish & Submit
+            </button>
+        </div>
+    </div>
+
+    <!-- QUIZ INSTRUCTION -->
+    <div style="background: #e0f2fe; border: 1px solid #bae6fd; border-radius: var(--radius-md); padding: 12px 18px; margin-bottom: 22px; font-size: 14px; color: #0369a1;">
+        ℹ️ Please answer all {{ questions|length }} questions. When the countdown timer reaches zero, your test will submit automatically.
+    </div>
+
+    <!-- TEST QUESTIONS FORM -->
+    <form id="testForm" method="POST" action="{{ url_for('submit_test') }}">
+        <input type="hidden" name="category" value="{{ category }}">
+        <input type="hidden" name="test_title" value="{{ test_title }}">
+
+        {% for q in questions %}
+        {% set q_idx = loop.index0 %}
+        <div class="question-card" id="q-{{ loop.index }}">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span style="font-size: 12.5px; font-weight: 700; color: var(--primary); background: #eff6ff; padding: 4px 10px; border-radius: 12px;">
+                    Question {{ loop.index }} of {{ questions|length }}
+                </span>
+                <span style="font-size: 13px; color: var(--text-muted);">1 Mark</span>
+            </div>
+
+            <div class="question-text">
+                {{ q.question }}
+            </div>
+
+            {% if q.code %}
+            <pre><code>{{ q.code }}</code></pre>
+            {% endif %}
+
+            <div style="margin-top: 14px;">
+                {% for opt in q.options %}
+                <label class="option-label">
+                    <input type="radio" name="ans_{{ q_idx }}" value="{{ loop.index0 }}" required>
+                    <span>{{ opt }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- SUBMIT ACTION -->
+        <div style="text-align: center; margin-top: 30px; margin-bottom: 60px;">
+            <button type="submit" class="btn btn-primary" style="padding: 14px 40px; font-size: 16px; font-weight: 700; box-shadow: var(--shadow-lg);">
+                ✅ Submit Test & View Scorecard
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- AUTO-SUBMIT TIMER JAVASCRIPT -->
+<script>
+    let durationSeconds = 600; // 10 minutes
+    const countdownEl = document.getElementById("countdown");
+    const testForm = document.getElementById("testForm");
+
+    const timerInterval = setInterval(function() {
+        durationSeconds--;
+        let mins = Math.floor(durationSeconds / 60);
+        let secs = durationSeconds % 60;
+        countdownEl.textContent = String(mins).padStart(2, '0') + ":" + String(secs).padStart(2, '0');
+
+        if (durationSeconds <= 30) {
+            countdownEl.style.color = "#ef4444";
+        }
+
+        if (durationSeconds <= 0) {
+            clearInterval(timerInterval);
+            alert("Time is up! Submitting your test automatically.");
+            testForm.submit();
+        }
+    }, 1000);
+</script>
+{% endblock %}
